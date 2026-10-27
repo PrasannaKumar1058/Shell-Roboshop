@@ -9,12 +9,12 @@ Domain_Name="deepuprassu.cloud"
 #Now you can loop it
 for instance in ${INSTANCES[@]}
 do
-     INSTANCE_ID=$(aws ec2 run-instances  --image-id ami-0055977a6e828a4f4 --instance-type t3.micro --security-group-ids sg-0970de82b6ff68f8b --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyCLIInstance}]' --query 'Instances[0].InstanceId' --output text)
+     INSTANCE_ID=$(aws ec2 run-instances  --image-id ami-0055977a6e828a4f4 --instance-type t3.micro --security-group-ids sg-0970de82b6ff68f8b --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=$instance}]' --query 'Instances[0].InstanceId' --output text)
     if [ $instance != "Frontend"  ]
     then
-        aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[*].[PrivateIpAddress]' --output text
+        Ip=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[*].[PrivateIpAddress]' --output text)
     else
-        aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[*].[PublicIpAddress]' --output text
+        Ip=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[*].[PublicIpAddress]' --output text)
     fi
     echo "$instance Ip Address: $Ip"
 done
